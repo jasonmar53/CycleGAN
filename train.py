@@ -11,9 +11,9 @@ from CycleGAN import CycleGAN
 
 parser = argparse.ArgumentParser()
 # dataset arguments
-parser.add_argument('--data_A', type=str, default='./data/apple2orange/trainA',
+parser.add_argument('--data_A', type=str, default='./data/monet2cars/trainA',
                     help='Path to the first set of images.')
-parser.add_argument('--data_B', type=str, default='./data/apple2orange/trainB',
+parser.add_argument('--data_B', type=str, default='./data/monet2cars/trainB',
                     help='Path to the second set of images.')
 parser.add_argument('--in_channels', type=int, default=3,
                     help='# of channels for input images')
@@ -120,20 +120,20 @@ def train():
             meta_graph_path = ckpt.model_checkpoint_path + '.meta'
             restore = tf.train.import_meta_graph(meta_graph_path)
             restore.restore(sess, tf.train.latest_checkpoint(checkpoint))
-            start_step = int(meta_graph_path.split("-")[2].split(".")[0])
+            start_step = int(meta_graph_path.split("-")[1].split(".")[0])
         else:
             sess.run(tf.global_variables_initializer())
             start_step = 1
 
         # generate fake images
-        realA, realB = next(dataloader)
+        realA, realB, dummyA, dummyB= next(dataloader)
         fakeA_imgs, fakeB_imgs = sess.run([fakeA, fakeB],
                                           feed_dict={cyclegan.realA: realA,
                                                      cyclegan.realB: realB})
 
         try:
             for step in range(start_step, opt.niter + opt.niter_decay + 1):
-                realA, realB = next(dataloader) # get next batch of real images
+                realA, realB, dummyA, dummyB = next(dataloader) # get next batch of real images
 
                 # calculate losses for the generators and discriminators and minimize them
                 fakeA_imgs, fakeB_imgs, Gen_loss_val, D_B_loss_val, \

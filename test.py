@@ -11,9 +11,9 @@ from DataLoader import DataLoader
 
 parser = argparse.ArgumentParser()
 # dataset arguments
-parser.add_argument('--data_A', type=str, default='./data/apple2orange/testA',
+parser.add_argument('--data_A', type=str, default='./data/monet2cars/testA',
                     help='Path to the first set of images.')
-parser.add_argument('--data_B', type=str, default='./data/apple2orange/testB',
+parser.add_argument('--data_B', type=str, default='./data/monet2cars/testB',
                     help='Path to the second set of images.')
 parser.add_argument('--in_channels', type=int, default=3,
                     help='# of channels for input images')
@@ -27,7 +27,7 @@ parser.add_argument('--load_size', type=int, default=286,
                     help='Default size to load in an image.')
 parser.add_argument('--crop_size', type=int, default=256,
                     help='Size to crop an image to.')
-parser.add_argument('--preprocess', type=str, default=None,
+parser.add_argument('--preprocess', type=str, default="resize_and_crop",
                     help='Augmentation to be performed when loading in an image. [resize_and_crop | crop | scale_width | scale_width_and_crop | None]')
 parser.add_argument('--flip', type=bool, default=False,
                     help='Flip images during augmentation.')
@@ -48,7 +48,7 @@ parser.add_argument('--load_model', type=str, default=None,
                     help='Load a model to test generating samples with.')
 parser.add_argument('--num_samples', type=int, default=32,
                     help='Number of samples you would like to generate.')
-parser.add_argument('--sample_directoy', type=str, default='./samples/apple2orange/',
+parser.add_argument('--sample_directoy', type=str, default='./samples/monet2cars/',
                     help='Directory in which samples will be saved to.')
 opt = parser.parse_args()
 
@@ -91,7 +91,7 @@ def test():
 
         # generate new images and save them to the `samples` directory
         for idx in range(opt.num_samples):
-            realA, realB = next(dataloader)
+            realA, realB, Aname, Bname = next(dataloader)
 
             generated_image = sess.run(fakeImg, feed_dict={cyclegan.realA: realA,
                                                            cyclegan.realB: realB})
@@ -99,6 +99,12 @@ def test():
             image_name = 'sample' + str(idx) + '.jpg'
             utils.save_image(generated_image, os.path.join(samples_dir, image_name))
 
+            if opt.direction is'AtoB':
+                print('trying to save... new ' + Aname[0])
+                utils.save_image(generated_image, os.path.join(samples_dir, ('new_' + str(Aname[0]))))
+            else:
+                print('trying to save... new ' + Bname[0])
+                utils.save_image(generated_image, os.path.join(samples_dir, ('new_' + str(Bname[0]))))
 
 if __name__ == '__main__':
     test()

@@ -25,7 +25,12 @@ class DataLoader():
         self.size_B = len(self.image_paths_B)
 
         # set input and output channels properly based on direction of mapping
+        print("direction - " + self.opt.direction)
         AtoB = self.opt.direction == 'AtoB'
+        if AtoB:
+            print("going A to B")
+        else:
+            print("going B to A")
         self.in_channels = self.opt.in_channels if AtoB else self.opt.out_channels
         self.out_channels = self.opt.out_channels if AtoB else self.opt.in_channels
 
@@ -60,7 +65,9 @@ class DataLoader():
             Iterator that will get a set batch size of images.
         """
         A = []
+        Anames = []
         B = []
+        Bnames = []
 
         if self.step % 1000 == 0: # shuffle the datasets every 1000 steps (~1 epoch)
             self.shuffle()
@@ -68,14 +75,24 @@ class DataLoader():
         for idx in range(self.opt.batch_size): # grab a batch of real data
             data = self.__getitem__(idx + (self.step * self.opt.batch_size))
             A.append(data['A'])
+            Apath = data['A_path']
+            pathsplitA = Apath.split('/')
+            Anames.append(pathsplitA[len(pathsplitA) - 1])
             B.append(data['B'])
+            Bpath = data['B_path']
+            pathsplitB = Bpath.split('/')
+            Bnames.append(pathsplitB[len(pathsplitB)-1])
+            Bnames.append(data['B_path'])
 
         self.step += 1
 
         A = np.stack(A)
         B = np.stack(B)
+        
+        Anames = np.stack(Anames)
+        Bnames = np.stack(Bnames)
 
-        return A, B
+        return A, B, Anames, Bnames
 
     def __len__(self):
         """
