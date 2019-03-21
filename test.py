@@ -79,14 +79,14 @@ def test():
         ckpt = tf.train.latest_checkpoint(checkpoint)
         saver.restore(sess, ckpt)
 
-        if opt.direction is 'AtoB': # map image from Domain A to Domain B
+        if str(opt.direction) == 'AtoB': # map image from Domain A to Domain B
             samples_dir = os.path.expanduser(os.path.join(opt.sample_directoy, opt.direction))
             fakeImg = fakeB
-        elif opt.direction is 'BtoA': # map image from Domain B to Domain A
+        elif str(opt.direction) == 'BtoA': # map image from Domain B to Domain A
             samples_dir = os.path.expanduser(os.path.join(opt.sample_directoy, opt.direction))
             fakeImg = fakeA
         else:
-            print('Invalid direction')
+            print(str(opt.direction))
             sys.exit(1)
 
         # generate new images and save them to the `samples` directory
@@ -99,11 +99,11 @@ def test():
             image_name = 'sample' + str(idx) + '.jpg'
             utils.save_image(generated_image, os.path.join(samples_dir, image_name))
 
-            if opt.direction is'AtoB':
-                print('trying to save... new ' + Aname[0])
+            if str(opt.direction) == 'AtoB':
+                print('trying to save... new A ' + Aname[0])
                 utils.save_image(generated_image, os.path.join(samples_dir, ('new_' + str(Aname[0]))))
             else:
-                print('trying to save... new ' + Bname[0])
+                print('trying to save... new B ' + Bname[0])
                 utils.save_image(generated_image, os.path.join(samples_dir, ('new_' + str(Bname[0]))))
 
 if __name__ == '__main__':

@@ -160,7 +160,7 @@ def uk(input,
         # weight initialization
         #weights = bilinear_upsample_filter(filter_size, stride, in_channels, out_channels)
         weights = __weights_init(filter_size, out_channels, in_channels,
-                                 init_type=weight_init_type, init_gain=weight_init_gain)
+                                init_type=weight_init_type, init_gain=weight_init_gain)
 
         layer = tf.nn.conv2d_transpose(input, weights,
                                        output_shape=[batch_size, out_shape, out_shape, out_channels],

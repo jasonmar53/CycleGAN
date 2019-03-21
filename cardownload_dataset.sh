@@ -9,5 +9,6 @@ TARGET_DIR=./data/stanford-cars-dataset/
 wget -N $URL1 -O $ZIP_FILE
 wget -N $URL2 -O $ZIP_FILE2
 mkdir -p $TARGET_DIR
-tar xvzf $ZIP_FILE -d ./data/
-tar xvzf $ZIP_FILE2 -d ./data/
+tar xvzf $ZIP_FILE -d
+tar xvzf $ZIP_FILE2 -d
+
